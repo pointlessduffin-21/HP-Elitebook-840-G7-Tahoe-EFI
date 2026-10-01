@@ -1184,7 +1184,7 @@
 				AAAAAAAAAAAAAAAAAAA=
 				</data>
 				<key>boot-args</key>
-				<string>keepsyms=1 -igfxblt -vi2c-force-polling swd_panic=1 -ibtcompatbeta -lilubetaall -amfipassbeta</string>
+				<string>-v keepsyms=1 -igfxblt -vi2c-force-polling swd_panic=1 -ibtcompatbeta -lilubetaall -amfipassbeta</string>
 				<key>csr-active-config</key>
 				<data>
 				AwoAAA==

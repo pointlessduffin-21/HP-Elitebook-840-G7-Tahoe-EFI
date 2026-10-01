@@ -1,0 +1,6 @@
+.DS_Store
+._*
+# OpenCore debug output and hardware dumps (SysReport contains ACPI tables incl. MSDM license key)
+opencore-*.txt
+panic-*.txt
+SysReport/

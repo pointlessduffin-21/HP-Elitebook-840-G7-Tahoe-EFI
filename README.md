@@ -25,6 +25,7 @@ OpenCore EFI for the **HP EliteBook 840 G7** running **macOS Tahoe 26** (tested 
 - ECEnabler, BrightnessKeys, NVMeFix, SMCBatteryManager, SMCProcessor, SMCLightSensor
 - USBMap.kext: a USBToolBox map using the native `AppleUSBHostMergeProperties` class
 - SIP partly disabled (`csr-active-config` = `0x00000A03`) and `SecureBootModel` = `Disabled`. The Wi-Fi root patch needs both.
+- boot-args: `-v keepsyms=1 -igfxblt -vi2c-force-polling swd_panic=1 -ibtcompatbeta -lilubetaall -amfipassbeta amfi=0x80`
 
 ## Before you boot: generate your own SMBIOS
 
@@ -63,12 +64,27 @@ Keeping both lets the same map work on Sequoia and earlier. If you remap with an
 | Boots to Tahoe desktop | ✅ (26.6) |
 | Installer from USB | ✅ |
 | iGPU | ✅ Framebuffer loads (1536 MB); Metal not yet verified |
-| Wi-Fi | ⚠️ Needs a root patch for `IO80211FamilyLegacy`, same as on Sequoia |
-| Internal audio | ❌ Broken without a root patch. Apple removed `AppleHDA.kext` in Tahoe, so AppleALC has nothing to patch. Restore it with an AppleHDA root patch, or use VoodooHDA. |
-| Bluetooth, sleep, trackpad gestures | Not yet verified on Tahoe |
+| Wi-Fi | ✅ After the OCLP-X root patch plus `amfi=0x80` (see below) |
+| Internal audio | ✅ After the OCLP-X root patch plus `amfi=0x80` (see below) |
+| Bluetooth | ✅ Tested with an Apple Magic Mouse (USB-C) |
+| Sleep, trackpad gestures | Not yet verified on Tahoe |
 
 ### Post-install root patch (Wi-Fi + audio)
-[OCLP-X](https://github.com/JeoJay127/OCLP-X/releases) supports both Intel Wi-Fi and AppleHDA on Tahoe. ([OCLP-Mod](https://github.com/laobamac/OCLP-Mod) was archived in June 2026.) In Tahoe, run **Post-Install Root Patch** and reboot. Re-run it after every macOS update.
+Neither works on a fresh Tahoe install:
+- **Audio:** Apple removed `AppleHDA.kext` in Tahoe, so AppleALC has nothing to patch.
+- **Wi-Fi:** AirportItlwm needs the Ventura `IO80211` stack restored.
+
+Both are fixed with [OCLP-X](https://github.com/JeoJay127/OCLP-X/releases) v2.7.0. ([OCLP-Mod](https://github.com/laobamac/OCLP-Mod) was archived in June 2026.)
+
+1. Boot Tahoe and get internet (USB tethering or Ethernet). OCLP-X downloads a Kernel Debug Kit.
+2. Run **Post-Install Root Patch**. It applies:
+   - **Modern Audio:** `AppleHDA.kext` (from 26.0 Beta 1)
+   - **Modern Wireless:** `IO80211.framework`, `WiFiPeerToPeer.framework` and `wifip2pd` (from 13.7.2)
+3. **Add `amfi=0x80` to boot-args before rebooting.** This EFI already includes it.
+
+> **Without `amfi=0x80`, Tahoe won't boot after the root patch.** AMFI rejects the patched ad-hoc-signed Wi-Fi frameworks (`code signature validation failed` for `IO80211`, `WiFiPeerToPeer`, `LibSystemShim.dylib`) even with AMFIPass 1.4.1 and `-amfipassbeta`. The boot then hangs at `(enable-swap)`, or reboots if `debug=0x100` isn't set. `amfi=0x80` relaxes AMFI so the patched files load. It can affect some apps' permission prompts (camera, microphone).
+
+Re-run the root patch after every macOS update, because updates remove it.
 
 ## Debugging
 

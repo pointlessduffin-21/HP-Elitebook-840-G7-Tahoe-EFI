@@ -4,3 +4,6 @@
 opencore-*.txt
 panic-*.txt
 SysReport/
+
+# EFI-Patched holds the real SMBIOS (serial/MLB/ROM/UUID) - never commit its config
+EFI-Patched/EFI/OC/config.plist

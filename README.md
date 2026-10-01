@@ -2,6 +2,8 @@
 
 OpenCore EFI for the **HP EliteBook 840 G7** running **macOS Tahoe 26** (tested on 26.6, build 25G72). The same EFI also covers Sequoia 15. Every included kext supports both versions, and the OS-specific Wi-Fi kexts are limited with `MinKernel`.
 
+![macOS Tahoe 26.6 running on the HP EliteBook 840 G7](screenshots/tahoe-about-this-mac.png)
+
 ## Hardware
 
 | Component | Details |
@@ -58,11 +60,15 @@ Keeping both lets the same map work on Sequoia and earlier. If you remap with an
 
 | Feature | Status |
 |---|---|
-| Boots to Tahoe desktop | ✅ |
+| Boots to Tahoe desktop | ✅ (26.6) |
 | Installer from USB | ✅ |
-| Wi-Fi | ⚠️ Needs a root patch for `IO80211FamilyLegacy` after install, same as on Sequoia |
-| Graphics acceleration / Metal | Not yet verified |
-| Bluetooth, audio, sleep, trackpad gestures | Not yet verified on Tahoe |
+| iGPU | ✅ Framebuffer loads (1536 MB); Metal not yet verified |
+| Wi-Fi | ⚠️ Needs a root patch for `IO80211FamilyLegacy`, same as on Sequoia |
+| Internal audio | ❌ Broken without a root patch. Apple removed `AppleHDA.kext` in Tahoe, so AppleALC has nothing to patch. Restore it with an AppleHDA root patch, or use VoodooHDA. |
+| Bluetooth, sleep, trackpad gestures | Not yet verified on Tahoe |
+
+### Post-install root patch (Wi-Fi + audio)
+[OCLP-X](https://github.com/JeoJay127/OCLP-X/releases) supports both Intel Wi-Fi and AppleHDA on Tahoe. ([OCLP-Mod](https://github.com/laobamac/OCLP-Mod) was archived in June 2026.) In Tahoe, run **Post-Install Root Patch** and reboot. Re-run it after every macOS update.
 
 ## Debugging
 

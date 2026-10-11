@@ -67,6 +67,7 @@ Keeping both lets the same map work on Sequoia and earlier. If you remap with an
 | Wi-Fi | ✅ After the OCLP-X root patch plus `amfi=0x80` (see below) |
 | Internal audio | ✅ After the OCLP-X root patch plus `amfi=0x80` (see below) |
 | Bluetooth | ✅ Tested with an Apple Magic Mouse (USB-C) |
+| Apple Music / DRM playback | ✅ Needs `unfairgva=7` in boot-args (WhateverGreen); already set in `config.plist` |
 | Sleep, trackpad gestures | Not yet verified on Tahoe |
 
 ### Post-install root patch (Wi-Fi + audio)
